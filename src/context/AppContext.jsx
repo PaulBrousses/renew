@@ -227,7 +227,6 @@ export const AppProvider = ({ children }) => {
           return;
         }
       } catch (error) {
-        console.error('Erreur de connexion:', error);
       }
     };
     
@@ -266,7 +265,6 @@ export const AppProvider = ({ children }) => {
         }
       }
     } catch (error) {
-      console.error('Erreur chargement données:', error);
     }
   };
 
@@ -302,11 +300,7 @@ export const AppProvider = ({ children }) => {
           type: 'INITIALIZE_USER',
           payload: { firstName, addictions, startDate }
         });
-      } else {
-        console.error('Erreur sauvegarde:', result.error);
       }
-    } catch (error) {
-      console.error('Erreur:', error);
     }
   };
 
@@ -362,11 +356,7 @@ export const AppProvider = ({ children }) => {
         };
 
         const result = await updateUserData(state.session.uid, updates);
-        if (!result.success) {
-          console.error('Erreur sauvegarde check-in:', result.error);
-        }
       } catch (error) {
-        console.error('Erreur:', error);
       }
     }
   };
@@ -407,11 +397,7 @@ export const AppProvider = ({ children }) => {
         };
 
         const result = await updateUserData(state.session.uid, updates);
-        if (!result.success) {
-          console.error('Erreur sauvegarde rechute:', result.error);
-        }
       } catch (error) {
-        console.error('Erreur:', error);
       }
     }
   };
@@ -488,12 +474,8 @@ export const AppProvider = ({ children }) => {
         };
         
         const result = await updateUserData(state.session.uid, updates);
-        if (!result.success) {
-          console.error('Erreur sauvegarde journal:', result.error);
-        }
       }
     } catch (error) {
-      console.error('Erreur sauvegarde journal:', error);
     }
   };
 
@@ -524,12 +506,8 @@ export const AppProvider = ({ children }) => {
         };
         
         const result = await updateUserData(state.session.uid, updates);
-        if (!result.success) {
-          console.error('Erreur sauvegarde addictions:', result.error);
-        }
       }
     } catch (error) {
-      console.error('Erreur mise à jour addictions:', error);
     }
   };
 

@@ -29,7 +29,6 @@ export const sendMagicLink = async (email) => {
     
     return { success: true };
   } catch (error) {
-    console.error('Erreur envoi magic link:', error);
     return { success: false, error: error.message };
   }
 };
@@ -66,7 +65,6 @@ export const saveUserData = async (userId, userData) => {
     await setDoc(doc(db, 'users', userId), userData, { merge: true });
     return { success: true };
   } catch (error) {
-    console.error('Erreur sauvegarde:', error);
     return { success: false, error: error.message };
   }
 };
@@ -82,7 +80,6 @@ export const getUserData = async (userId) => {
       return { success: false, error: 'Utilisateur non trouvé' };
     }
   } catch (error) {
-    console.error('Erreur chargement:', error);
     return { success: false, error: error.message };
   }
 };
@@ -93,7 +90,6 @@ export const updateUserData = async (userId, updates) => {
     await updateDoc(docRef, updates);
     return { success: true };
   } catch (error) {
-    console.error('Erreur mise à jour:', error);
     return { success: false, error: error.message };
   }
 };

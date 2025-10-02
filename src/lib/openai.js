@@ -59,7 +59,6 @@ Génère maintenant ton message expert:`
 
     return response.choices[0].message.content.trim()
   } catch (error) {
-    console.error('Erreur OpenAI:', error)
     
     // Message de fallback riche basé sur les données locales
     const { getRichMessageForDay } = await import('../utils/messages.js');

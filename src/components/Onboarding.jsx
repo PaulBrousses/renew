@@ -59,7 +59,6 @@ const AddictionStep = ({ selectedAddictions, setSelectedAddictions }) => {
       const newSelection = prev.includes(addictionId)
         ? prev.filter(id => id !== addictionId)
         : [...prev, addictionId];
-      console.log('Addiction sélectionnée:', addictionId, 'Nouvelle sélection:', newSelection);
       return newSelection;
     });
   }, [setSelectedAddictions]);
@@ -234,7 +233,6 @@ const Onboarding = () => {
     try {
       await initializeUser(firstName, selectedAddictions, startDate);
     } catch (error) {
-      console.error('Erreur initialisation:', error);
       setIsLoading(false);
     }
   }, [firstName, selectedAddictions, startDate, initializeUser, isLoading]);

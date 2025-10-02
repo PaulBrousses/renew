@@ -42,7 +42,6 @@ const DashboardCompact = () => {
       const message = await generatePersonalizedMessage(user);
       setAiMessage(message);
     } catch (error) {
-      console.error('Erreur génération message:', error);
       
       // Message de fallback riche basé sur les données
       const currentStreak = Math.max(...Object.values(user.currentStreaks || {}).filter(v => v !== null));

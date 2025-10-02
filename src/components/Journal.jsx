@@ -220,7 +220,6 @@ const Journal = ({ isOpen, onClose, embedded = false, forceEntry = false, onSave
       setMood('');
       setNote('');
     } catch (error) {
-      console.error('Erreur sauvegarde journal:', error);
     } finally {
       setSaving(false);
     }
