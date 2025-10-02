@@ -6,6 +6,7 @@
 [![Vite](https://img.shields.io/badge/Vite-5-purple.svg)](https://vitejs.dev/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-teal.svg)](https://tailwindcss.com/)
 [![Firebase](https://img.shields.io/badge/Firebase-10-orange.svg)](https://firebase.google.com/)
+[![Live Demo](https://img.shields.io/badge/Demo-Live-green.svg)](https://renew-sobriety.vercel.app)
 
 ## 🎯 À propos
 
@@ -14,21 +15,23 @@
 ### ✨ Fonctionnalités principales
 
 - 🚀 **Onboarding guidé** - Configuration simple en 4 étapes
-- 📊 **Dashboard intelligent** - Vue d'ensemble de ta progression
-- ✅ **Check-in quotidien** - Validation de tes journées sobres ou gestion des rechutes
-- 🧠 **Messages IA personnalisés** - Encouragements adaptés à ta situation du jour
-- 🏆 **Système de badges** - Récompenses pour célébrer tes milestones
-- 📅 **Calendrier visuel** - Historique complet de ton parcours
-- 📖 **Journal personnel** - Suivi de ton humeur et tes ressentis
-- 💰 **Calcul d'économies** - Visualise l'argent économisé
-- ❤️ **Bénéfices santé** - Découvre les améliorations de ta santé jour après jour
+- 📊 **Dashboard compact** - Vue d'ensemble optimisée de ta progression
+- ✅ **Check-in quotidien** - Validation de tes journées sobres ou gestion des rechutes avec journal intégré
+- 🧠 **Messages IA personnalisés** - Encouragements scientifiques adaptés à ta situation avec données chiffrées
+- 🏆 **Système de badges** - Récompenses pour célébrer tes milestones par addiction
+- 📖 **Journal personnel** - Suivi de ton humeur et tes ressentis avec contexte addiction
+- 💰 **Calcul d'économies** - Visualise l'argent économisé en temps réel
+- ❤️ **Bénéfices santé** - Découvre les améliorations de ta santé jour après jour par addiction
+- 🔐 **Authentification Magic Link** - Connexion sécurisée sans mot de passe
 
 ### 🎨 Design & UX
 
-- Interface moderne et apaisante
-- Responsive design (mobile-first)
-- Animations fluides et micro-interactions
-- Thème sombre/clair adaptatif
+- Interface moderne et apaisante avec sidebar de navigation
+- Responsive design optimisé (mobile et desktop)
+- Animations fluides avec Canvas Confetti pour les célébrations
+- Layout intelligent qui s'adapte au nombre d'addictions
+- Dashboard sans scroll avec utilisation optimale de l'espace
+- Modales cohérentes pour toutes les interactions
 - Accessibilité optimisée
 
 ## 🚀 Technologies
@@ -40,9 +43,9 @@
 - **Lucide React** - Icônes modernes et cohérentes
 
 ### Backend & Services
-- **Firebase Auth** - Authentification sécurisée par email
-- **Firestore** - Base de données NoSQL en temps réel
-- **OpenAI API** - Génération de messages personnalisés
+- **Firebase Auth** - Authentification Magic Link sécurisée par email
+- **Firestore** - Base de données NoSQL en temps réel pour les données utilisateur
+- **OpenAI API** - Génération de messages personnalisés avec faits scientifiques et conseils
 
 ### Outils & Déploiement
 - **Vercel** - Déploiement et hébergement
@@ -61,8 +64,8 @@
 
 ```bash
 # Cloner le projet
-git clone https://github.com/votre-username/renew-sobriety-tracker.git
-cd renew-sobriety-tracker
+git clone https://github.com/PaulBrousses/renew.git
+cd renew
 
 # Installer les dépendances
 npm install
@@ -107,14 +110,16 @@ npm run lint         # Vérification du code
 ```
 src/
 ├── components/          # Composants React réutilisables
-│   ├── Auth.jsx        # Authentification
-│   ├── Calendar.jsx    # Calendrier de progression
-│   ├── CheckIn.jsx     # Check-in quotidien
-│   └── ...
+│   ├── Auth.jsx        # Authentification Magic Link
+│   ├── DashboardCompact.jsx # Dashboard principal optimisé
+│   ├── CheckIn.jsx     # Check-in quotidien en modale
+│   ├── Journal.jsx     # Journal personnel moderne
+│   ├── BadgesModern.jsx # Système de récompenses
+│   └── Onboarding.jsx  # Configuration initiale
 ├── context/            # Context API pour l'état global
-├── hooks/              # Hooks personnalisés
+├── hooks/              # Hooks personnalisés (useApp)
 ├── lib/                # Services externes (Firebase, OpenAI)
-├── utils/              # Fonctions utilitaires
+├── utils/              # Fonctions utilitaires (badges, messages)
 └── styles/             # Styles globaux
 ```
 
@@ -169,9 +174,9 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 Si tu as des questions ou besoin d'aide :
 
-- 📧 Email : support@renew-app.com
-- 🐛 Issues : [GitHub Issues](https://github.com/votre-username/renew-sobriety-tracker/issues)
-- 💬 Discussions : [GitHub Discussions](https://github.com/votre-username/renew-sobriety-tracker/discussions)
+- 🐛 Issues : [GitHub Issues](https://github.com/PaulBrousses/renew/issues)
+- 💬 Discussions : [GitHub Discussions](https://github.com/PaulBrousses/renew/discussions)
+- 📧 Email : paul.brousses@gmail.com
 
 ---
 

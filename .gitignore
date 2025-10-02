@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Documentation files
+DEPLOYMENT.md
+FIREBASE_EMAIL_SETUP.md
+GITHUB_DEPLOY.md
