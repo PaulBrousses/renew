@@ -88,6 +88,17 @@ const Auth = () => {
             >
               {message}
               
+              {message.includes('✅') && (
+                <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-blue-800 text-xs">
+                  📧 <strong>Email pas reçu ?</strong> Vérifie tes spams ou attends 1-2 minutes. 
+                  <button 
+                    onClick={handleSignUp}
+                    className="ml-2 underline hover:no-underline"
+                  >
+                    Renvoyer
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

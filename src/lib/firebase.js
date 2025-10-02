@@ -19,6 +19,14 @@ export const db = getFirestore(app);
 const actionCodeSettings = {
   url: window.location.origin,
   handleCodeInApp: true,
+  iOS: {
+    bundleId: 'com.renew.app'
+  },
+  android: {
+    packageName: 'com.renew.app',
+    installApp: true,
+    minimumVersion: '12'
+  }
 };
 
 export const sendMagicLink = async (email) => {

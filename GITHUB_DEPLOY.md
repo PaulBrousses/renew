@@ -29,7 +29,7 @@ git commit -m "🎉 Initial commit - Renew sobriety tracker app"
 
 ```bash
 # Ajouter l'origine remote (remplacer YOUR_USERNAME)
-git remote add origin https://github.com/YOUR_USERNAME/renew-sobriety-tracker.git
+git remote add origin https://github.com/PaulBrousses/renew.git
 
 # Renommer la branche principale
 git branch -M main
