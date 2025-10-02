@@ -301,6 +301,8 @@ export const AppProvider = ({ children }) => {
           payload: { firstName, addictions, startDate }
         });
       }
+    } catch (error) {
+      // Erreur silencieuse
     }
   };
 
