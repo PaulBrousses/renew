@@ -1,173 +1,263 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, RotateCcw } from 'lucide-react';
+import { CheckCircle, XCircle, Wine, Cigarette, Calendar, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../hooks/useApp';
+import Journal from './Journal';
 
-const CheckIn = () => {
-  const { user, checkInSuccess, checkInRelapse, hasCheckedInToday } = useApp();
-  const [showRelapseModal, setShowRelapseModal] = useState(false);
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+const CheckIn = ({ isOpen, onClose }) => {
+  const { user, checkInSuccess, checkInRelapse, getTodayCheckIns } = useApp();
+  const [showCatchUpModal, setShowCatchUpModal] = useState(false);
+  const [catchUpDays, setCatchUpDays] = useState([]);
+  const [showJournalModal, setShowJournalModal] = useState(false);
+  const [pendingCheckIn, setPendingCheckIn] = useState(null);
 
-  const hasCheckedToday = hasCheckedInToday();
+  if (!user) return null;
 
-  const handleSuccess = () => {
-    checkInSuccess();
-    
-    // Animation confetti
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#4A90E2', '#50C878', '#FF9F43']
-    });
-    
-    setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 3000);
+  const todayCheckIns = getTodayCheckIns();
+  const hasAlcoholCheckIn = todayCheckIns?.alcohol !== undefined;
+  const hasCigaretteCheckIn = todayCheckIns?.cigarette !== undefined;
+
+  const handleSuccess = (addiction) => {
+    // Ouvrir le journal avant de valider
+    setPendingCheckIn({ type: 'success', addiction });
+    setShowJournalModal(true);
   };
 
   const handleRelapse = (addiction) => {
-    checkInRelapse(addiction);
-    setShowRelapseModal(false);
+    // Ouvrir le journal avant de valider
+    setPendingCheckIn({ type: 'relapse', addiction });
+    setShowJournalModal(true);
   };
 
-  if (hasCheckedToday) {
-    const lastCheckIn = user.checkIns[user.checkIns.length - 1];
-    const isSuccess = lastCheckIn?.success;
+  const handleJournalSave = (journalData) => {
+    if (pendingCheckIn) {
+      if (pendingCheckIn.type === 'success') {
+        checkInSuccess(pendingCheckIn.addiction, journalData.mood, journalData.note);
+        
+        // Animation confetti
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.6 },
+          colors: ['#4A90E2', '#50C878']
+        });
+      } else {
+        checkInRelapse(pendingCheckIn.addiction, journalData.mood, journalData.note);
+      }
+      
+      setPendingCheckIn(null);
+      setShowJournalModal(false);
+      if (onClose) onClose(); // Fermer la modale après le check-in
+    }
+  };
+
+  const openCatchUp = () => {
+    // Calculer les jours manqués (max 7 jours)
+    const today = new Date();
+    const lastCheckIn = user.lastCheckIn ? new Date(user.lastCheckIn) : new Date(user.startDate);
+    const daysDiff = Math.floor((today - lastCheckIn) / (1000 * 60 * 60 * 24));
     
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={`card ${isSuccess ? 'bg-green-50 border-green-200' : 'bg-orange-50 border-orange-200'}`}
-      >
-        <div className="text-center py-6">
-          <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 ${
-            isSuccess ? 'bg-green-100' : 'bg-orange-100'
-          }`}>
-            {isSuccess ? (
-              <Check className="w-8 h-8 text-green-600" />
-            ) : (
-              <X className="w-8 h-8 text-orange-600" />
-            )}
-          </div>
-          <h3 className={`text-lg font-semibold mb-2 ${
-            isSuccess ? 'text-green-800' : 'text-orange-800'
-          }`}>
-            {isSuccess ? 'Déjà validé pour aujourd\'hui ✅' : 'Rechute enregistrée'}
-          </h3>
-          <p className={`text-sm ${
-            isSuccess ? 'text-green-600' : 'text-orange-600'
-          }`}>
-            {isSuccess 
-              ? 'Bravo ! Reviens demain pour continuer ton streak.'
-              : 'Pas de jugement. Demain est un nouveau jour.'
-            }
-          </p>
-        </div>
-      </motion.div>
-    );
-  }
+    if (daysDiff > 1 && daysDiff <= 7) {
+      const missedDays = [];
+      for (let i = daysDiff - 1; i > 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        missedDays.push({
+          date: date.toISOString().split('T')[0],
+          dateStr: date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+        });
+      }
+      setCatchUpDays(missedDays);
+      setShowCatchUpModal(true);
+    }
+  };
+
+  // Afficher le bouton de rattrapage si nécessaire
+  const shouldShowCatchUp = () => {
+    if (!user.lastCheckIn) return false;
+    const today = new Date();
+    const lastCheckIn = new Date(user.lastCheckIn);
+    const daysDiff = Math.floor((today - lastCheckIn) / (1000 * 60 * 60 * 24));
+    return daysDiff > 1 && daysDiff <= 7;
+  };
+
+  if (!isOpen) return null;
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-4"
+      <div
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+        onClick={onClose}
       >
-        <h3 className="text-lg font-semibold text-gray-800 text-center">
-          Comment s'est passée ta journée ?
-        </h3>
-        
-        <div className="space-y-3">
-          <motion.button
-            onClick={handleSuccess}
-            className="w-full btn-primary flex items-center justify-center space-x-3 py-4"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <Check className="w-5 h-5" />
-            <span>J'ai tenu aujourd'hui ✅</span>
-          </motion.button>
-          
-          <motion.button
-            onClick={() => setShowRelapseModal(true)}
-            className="w-full btn-secondary flex items-center justify-center space-x-3 py-4"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <X className="w-5 h-5" />
-            <span>J'ai recraché ❌</span>
-          </motion.button>
-        </div>
-      </motion.div>
-
-      {/* Modal de rechute */}
-      <AnimatePresence>
-        {showRelapseModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setShowRelapseModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="card max-w-sm w-full"
-              onClick={(e) => e.stopPropagation()}
+        <div
+          className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl transform scale-100 transition-all duration-300"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header modal */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">Check-in quotidien</h3>
+              <p className="text-gray-600 text-sm">Comment s'est passée ta journée ?</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 mx-auto bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                  <RotateCcw className="w-8 h-8 text-orange-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  Quelle addiction ?
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Pas de jugement. Chaque jour est un nouveau départ.
-                </p>
-              </div>
-              
-              <div className="space-y-3">
-                {user.addictions.map(addiction => (
-                  <button
-                    key={addiction}
-                    onClick={() => handleRelapse(addiction)}
-                    className="w-full p-3 text-left rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 transition-colors"
-                  >
-                    {addiction === 'alcohol' ? '🍺 Alcool' : '🚬 Cigarette'}
-                  </button>
-                ))}
-              </div>
-              
-              <button
-                onClick={() => setShowRelapseModal(false)}
-                className="w-full mt-4 py-2 text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                Annuler
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <X className="w-5 h-5 text-gray-500" />
+            </button>
+          </div>
 
-      {/* Message de succès */}
-      <AnimatePresence>
-        {showSuccessMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50"
-          >
-            🎉 Bravo ! Un jour de plus !
-          </motion.div>
+          <div className="space-y-6">
+
+      {/* Bouton de rattrapage */}
+      {shouldShowCatchUp() && (
+        <button
+          onClick={openCatchUp}
+          className="w-full p-3 bg-yellow-50 hover:bg-yellow-100 text-yellow-800 rounded-xl transition-colors border border-yellow-200 flex items-center justify-center space-x-2 hover:scale-[1.02]"
+        >
+          <Calendar className="w-4 h-4" />
+          <span>Rattraper les jours manqués</span>
+        </button>
+      )}
+
+      {/* Check-ins par addiction */}
+      <div className="space-y-4">
+        {user.addictions.includes('alcohol') && (
+          <div className="card bg-red-50 border-red-200">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-2">
+                <Wine className="w-5 h-5 text-red-600" />
+                <span className="font-medium text-red-800">Alcool</span>
+              </div>
+              {hasAlcoholCheckIn && (
+                <CheckCircle className="w-5 h-5 text-green-600" />
+              )}
+            </div>
+            
+            {!hasAlcoholCheckIn ? (
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleSuccess('alcohol')}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition-colors text-sm"
+                >
+                  ✅ Tenu
+                </button>
+                <button
+                  onClick={() => handleRelapse('alcohol')}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition-colors text-sm"
+                >
+                  ❌ Recraché
+                </button>
+              </div>
+            ) : (
+              <p className="text-sm text-green-700 text-center">
+                {todayCheckIns.alcohol ? '🎉 Bien joué !' : '💪 Tu recommences, c\'est bien !'}
+              </p>
+            )}
+          </div>
         )}
-      </AnimatePresence>
+
+        {user.addictions.includes('cigarette') && (
+          <div className="card bg-gray-50 border-gray-200">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-2">
+                <Cigarette className="w-5 h-5 text-gray-600" />
+                <span className="font-medium text-gray-800">Cigarette</span>
+              </div>
+              {hasCigaretteCheckIn && (
+                <CheckCircle className="w-5 h-5 text-green-600" />
+              )}
+            </div>
+            
+            {!hasCigaretteCheckIn ? (
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleSuccess('cigarette')}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition-colors text-sm"
+                >
+                  ✅ Tenu
+                </button>
+                <button
+                  onClick={() => handleRelapse('cigarette')}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition-colors text-sm"
+                >
+                  ❌ Recraché
+                </button>
+              </div>
+            ) : (
+              <p className="text-sm text-green-700 text-center">
+                {todayCheckIns.cigarette ? '🎉 Bien joué !' : '💪 Tu recommences, c\'est bien !'}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Modal de rattrapage */}
+      {showCatchUpModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md max-h-96 overflow-y-auto">
+              <h3 className="text-lg font-semibold mb-4 text-center">
+                Rattraper les jours manqués
+              </h3>
+              <div className="space-y-3">
+                {catchUpDays.map((day) => (
+                  <div key={day.date} className="border rounded-lg p-3">
+                    <p className="font-medium text-sm text-gray-800 mb-2">
+                      {day.dateStr}
+                    </p>
+                    <div className="space-y-2">
+                      {user.addictions.map(addiction => (
+                        <div key={addiction} className="flex items-center justify-between">
+                          <span className="text-sm">
+                            {addiction === 'alcohol' ? '🍺 Alcool' : '🚬 Cigarette'}
+                          </span>
+                          <div className="flex space-x-1">
+                            <button
+                              onClick={() => {/* TODO: Implémenter rattrapage */}}
+                              className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs"
+                            >
+                              Tenu
+                            </button>
+                            <button
+                              onClick={() => {/* TODO: Implémenter rattrapage */}}
+                              className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs"
+                            >
+                              Recraché
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <button
+                  onClick={() => setShowCatchUpModal(false)}
+                  className="w-full p-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl transition-colors"
+                >
+                  Fermer
+                </button>
+              </div>
+          </div>
+        </div>
+      )}
+
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Journal obligatoire */}
+      <Journal
+        isOpen={showJournalModal}
+        onClose={() => {
+          setShowJournalModal(false);
+          setPendingCheckIn(null);
+        }}
+        forceEntry={true}
+        onSave={handleJournalSave}
+        addiction={pendingCheckIn?.addiction}
+        checkInType={pendingCheckIn?.type}
+      />
     </>
   );
 };
