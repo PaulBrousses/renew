@@ -192,6 +192,7 @@ const BadgesModern = ({ isOpen, onClose }) => {
           )}
         </div>
       </div>
+    </div>
   );
 };
 
