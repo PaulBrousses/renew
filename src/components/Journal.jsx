@@ -168,6 +168,22 @@ const JournalContent = ({
                           })}
                         </span>
                         <span className="text-xs text-gray-500">{entryMood?.label}</span>
+                        {/* Affichage de l'addiction si présente */}
+                        {entry.addiction && (
+                          <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
+                            {entry.addiction === 'alcohol' ? '🍷 Alcool' : '🚬 Cigarette'}
+                          </span>
+                        )}
+                        {/* Affichage du type de check-in si présent */}
+                        {entry.checkInType && (
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            entry.checkInType === 'success' 
+                              ? 'bg-green-100 text-green-700' 
+                              : 'bg-orange-100 text-orange-700'
+                          }`}>
+                            {entry.checkInType === 'success' ? '✅ Réussi' : '🔄 Rechute'}
+                          </span>
+                        )}
                       </div>
                       {entry.note && (
                         <p className="text-xs text-gray-700 line-clamp-2">"{entry.note}"</p>

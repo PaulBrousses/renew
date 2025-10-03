@@ -183,12 +183,20 @@ const DashboardCompact = () => {
               <span className="font-medium">Récompenses</span>
             </button>
             
-                <button
+            <button
               onClick={() => setShowJournal(true)}
               className="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition-colors"
             >
               <BookOpen className="w-5 h-5" />
               <span className="font-medium">Journal</span>
+            </button>
+            
+                <button
+              onClick={() => setView('settings')}
+              className="w-full flex items-center space-x-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-700 rounded-xl transition-colors"
+            >
+              <Settings className="w-5 h-5" />
+              <span className="font-medium">Paramètres</span>
                 </button>
           </div>
           </nav>

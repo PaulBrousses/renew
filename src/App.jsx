@@ -5,6 +5,7 @@ import Auth from './components/Auth';
 import Onboarding from './components/Onboarding';
 import DashboardCompact from './components/DashboardCompact';
 import BadgeCelebration from './components/BadgeCelebration';
+import { SettingsFullScreen } from './components/Settings';
 
 const AppContent = () => {
   const { currentView, loading, showCelebration, celebrationBadge, hideCelebration } = useApp();
@@ -25,6 +26,7 @@ const AppContent = () => {
       {currentView === 'auth' && <Auth />}
       {currentView === 'onboarding' && <Onboarding />}
       {currentView === 'dashboard' && <DashboardCompact />}
+      {currentView === 'settings' && <SettingsFullScreen />}
       
       {/* Célébration des badges */}
       <BadgeCelebration 

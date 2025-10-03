@@ -80,7 +80,7 @@ const BadgeCelebration = ({ badge, isOpen, onClose }) => {
       />
       
       {/* Modal de célébration */}
-      <div className={`relative bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl transform transition-all duration-500 ${
+      <div className={`relative bg-white rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl transform transition-all duration-500 ${
         isAnimating 
           ? 'scale-100 opacity-100 translate-y-0' 
           : 'scale-75 opacity-0 translate-y-8'
@@ -100,12 +100,12 @@ const BadgeCelebration = ({ badge, isOpen, onClose }) => {
         </div>
 
         {/* Contenu principal */}
-        <div className="text-center space-y-6 relative z-10">
+        <div className="text-center space-y-4 relative z-10">
           
           {/* Icône de succès avec animation */}
-          <div className="relative">
-            <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center shadow-lg animate-pulse">
-              <Sparkles className="w-12 h-12 text-white animate-spin" style={{ animationDuration: '3s' }} />
+          <div className="relative mb-4">
+            <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center shadow-lg animate-pulse">
+              <Sparkles className="w-8 h-8 text-white animate-spin" style={{ animationDuration: '3s' }} />
             </div>
             
             {/* Cercles d'onde */}
@@ -114,43 +114,43 @@ const BadgeCelebration = ({ badge, isOpen, onClose }) => {
           </div>
 
           {/* Titre de félicitations */}
-          <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-gray-900 animate-bounce">
+          <div className="space-y-1 mb-4">
+            <h2 className="text-xl font-bold text-gray-900 animate-bounce">
               🎉 Félicitations !
             </h2>
-            <p className="text-gray-600">Tu as débloqué une nouvelle récompense</p>
+            <p className="text-sm text-gray-600">Tu as débloqué une nouvelle récompense</p>
           </div>
 
           {/* Badge débloqué */}
-          <div className="relative">
-            <div className={`inline-flex items-center space-x-3 px-6 py-4 rounded-2xl ${badge.color} shadow-lg transform hover:scale-105 transition-transform`}>
-              <span className="text-3xl animate-bounce" style={{ animationDelay: '0.2s' }}>
+          <div className="relative mb-4">
+            <div className={`inline-flex items-center space-x-3 px-4 py-3 rounded-xl ${badge.color} shadow-lg transform hover:scale-105 transition-transform`}>
+              <span className="text-2xl animate-bounce" style={{ animationDelay: '0.2s' }}>
                 {badge.icon}
               </span>
               <div className="text-left">
-                <h3 className="font-bold text-lg">{badge.name}</h3>
-                <p className="text-sm opacity-90">{badge.days} jour{badge.days > 1 ? 's' : ''}</p>
+                <h3 className="font-bold text-base">{badge.name}</h3>
+                <p className="text-xs opacity-90">{badge.days} jour{badge.days > 1 ? 's' : ''}</p>
               </div>
             </div>
             
             {/* Effet de lueur */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-400/20 to-orange-400/20 blur-xl animate-pulse" />
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-yellow-400/20 to-orange-400/20 blur-lg animate-pulse" />
           </div>
 
           {/* Description */}
-          <div className="bg-gray-50 rounded-2xl p-4">
-            <p className="text-gray-700 font-medium">{badge.description}</p>
+          <div className="bg-gray-50 rounded-xl p-3 mb-4">
+            <p className="text-sm text-gray-700 font-medium">{badge.description}</p>
           </div>
 
           {/* Message motivationnel */}
-          <div className="space-y-3">
+          <div className="space-y-2 mb-4">
             <div className="flex items-center justify-center space-x-2 text-green-600">
-              <Sparkles className="w-5 h-5" />
-              <span className="font-semibold">Continue comme ça !</span>
-              <Sparkles className="w-5 h-5" />
+              <Sparkles className="w-4 h-4" />
+              <span className="font-semibold text-sm">Continue comme ça !</span>
+              <Sparkles className="w-4 h-4" />
             </div>
             
-            <p className="text-sm text-gray-600">
+            <p className="text-xs text-gray-600">
               Chaque jour compte dans ton parcours vers la liberté
             </p>
           </div>
@@ -158,7 +158,7 @@ const BadgeCelebration = ({ badge, isOpen, onClose }) => {
           {/* Bouton de fermeture */}
           <button
             onClick={handleClose}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-2xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-4 rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg text-sm"
           >
             Continuer mon parcours
           </button>
