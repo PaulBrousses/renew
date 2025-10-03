@@ -65,6 +65,7 @@ const DashboardCompact = () => {
       const hasRelapseToday = todayRelapses.length > 0 || todayCheckIns.some(c => c.success === false);
       const dailySavings = (user.addictions.includes('alcohol') ? 12 : 0) + (user.addictions.includes('cigarette') ? 8 : 0);
       const totalSavings = currentStreak * dailySavings;
+      const annualSavings = dailySavings * 365;
       const addictionText = user.addictions.length === 2 ? "l'alcool et la cigarette" : user.addictions.includes('alcohol') ? "l'alcool" : "la cigarette";
       
       let fallbackMessage;
@@ -90,11 +91,11 @@ const DashboardCompact = () => {
       } else {
         // Messages pour succès
         const successMessages = [
-          `${user.firstName}, après ${currentStreak} jours sans ${addictionText}, ton corps se régénère ! 🧬\n\nTu as économisé ${totalSavings}€ et ton système immunitaire est 40% plus efficace qu'au jour 1.\n\n💪 Astuce : Bois un grand verre d'eau au réveil pour booster cette détox naturelle !`,
+          `${user.firstName}, après ${currentStreak} jours sans ${addictionText}, ton corps se régénère ! 🧬\n\nTu économises ${dailySavings}€/jour (${annualSavings}€/an) et ton système immunitaire est 40% plus efficace qu'au jour 1.\n\n💪 Astuce : Bois un grand verre d'eau au réveil pour booster cette détox naturelle !`,
           
-          `Bravo ${user.firstName} ! ${currentStreak} jours de sobriété = ${totalSavings}€ d'économies ! 💰\n\nTon foie a éliminé 85% des toxines accumulées et ta qualité de sommeil s'améliore de 30%.\n\n🌟 Continue, chaque jour te rapproche de tes objectifs !`,
+          `Bravo ${user.firstName} ! ${currentStreak} jours de sobriété = ${totalSavings}€ d'économies ! 💰\n\nÀ ce rythme (${dailySavings}€/jour), tu économiseras ${annualSavings}€ cette année !\n\n🌟 Continue, chaque jour te rapproche de tes objectifs !`,
           
-          `${user.firstName}, ${currentStreak} jours sans ${addictionText} : ton corps te dit MERCI ! 🙏\n\nÉconomies : ${totalSavings}€ | Espérance de vie : +2 semaines | Énergie : +50%\n\n🚀 Astuce : Remplace l'envie par 5 minutes de marche rapide !`
+          `${user.firstName}, ${currentStreak} jours sans ${addictionText} : ton corps te dit MERCI ! 🙏\n\nÉconomies : ${totalSavings}€ | Rythme : ${dailySavings}€/jour = ${annualSavings}€/an | Énergie : +50%\n\n🚀 Astuce : Remplace l'envie par 5 minutes de marche rapide !`
         ];
         fallbackMessage = successMessages[Math.floor(Math.random() * successMessages.length)];
       }

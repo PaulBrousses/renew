@@ -126,14 +126,18 @@ export const richMessages = {
         tip: "💡 L'alcool épuise la sérotonine, d'où la déprime du lendemain."
       },
       {
-        message: "Chaque jour sobre, c'est 12€ économisés en moyenne. Calcule tes économies !",
-        tip: "💡 Un français dépense en moyenne 4380€/an en alcool."
+        message: "Chaque jour sobre, c'est 12€ économisés en moyenne. Soit 4380€/an !",
+        tip: "💡 Un français dépense en moyenne 4380€/an en alcool (12€/jour)."
       }
     ],
     cigarette: [
       {
         message: "Chaque cigarette non fumée, ce sont 11 minutes de vie gagnées. Fais le calcul !",
         tip: "💡 Une cigarette contient plus de 4000 substances chimiques, dont 70 cancérigènes."
+      },
+      {
+        message: "Chaque jour sans cigarette, c'est 8€ économisés. Soit 2920€/an !",
+        tip: "💡 Un paquet coûte environ 8€, soit 2920€/an pour un fumeur quotidien."
       },
       {
         message: "Tes poumons éliminent 1500 particules toxiques par jour depuis que tu as arrêté.",

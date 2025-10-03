@@ -41,6 +41,7 @@ export const generatePersonalizedMessage = async (user) => {
     // Calcul des économies (seulement si pas de rechute aujourd'hui)
     const dailySavings = (addictions.includes('alcohol') ? 12 : 0) + (addictions.includes('cigarette') ? 8 : 0);
     const totalSavings = currentStreak * dailySavings;
+    const annualSavings = dailySavings * 365;
     
     // Récupérer les données du journal d'aujourd'hui
     const todayJournalEntries = todayCheckIns.filter(c => c.note && c.note.trim() !== '');
@@ -60,7 +61,7 @@ Contexte:
 - Addiction(s): ${addictionText}
 - Streak réel: ${currentStreak} jours
 - Situation: ${situation}
-- Économies: ${totalSavings}€
+- Économies totales: ${totalSavings}€ (${dailySavings}€/jour = ${annualSavings}€/an)
 - Rechutes aujourd'hui: ${relapseAddictions.length > 0 ? relapseAddictions.join(', ') : 'aucune'}
 ${journalContext ? `- ${journalContext}` : ''}
 
