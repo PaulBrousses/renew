@@ -43,22 +43,63 @@ const DashboardCompact = () => {
       setAiMessage(message);
     } catch (error) {
       
-      // Message de fallback riche basé sur les données
-      const currentStreak = Math.max(...Object.values(user.currentStreaks || {}).filter(v => v !== null));
+      // Message de fallback intelligent basé sur les données réelles
+      const today = new Date().toISOString().split('T')[0];
+      const todayRelapses = user.relapses?.filter(relapse => relapse.date === today) || [];
+      const todayCheckIns = user.checkIns?.filter(checkIn => checkIn.date === today) || [];
+      
+      // Calculer les streaks réels
+      const realStreaks = {};
+      user.addictions.forEach(addiction => {
+        const hasRelapseToday = todayRelapses.some(r => r.addiction === addiction);
+        const hasFailedCheckIn = todayCheckIns.some(c => c.addiction === addiction && c.success === false);
+        
+        if (hasRelapseToday || hasFailedCheckIn) {
+          realStreaks[addiction] = 0;
+        } else {
+          realStreaks[addiction] = user.currentStreaks?.[addiction] || 0;
+        }
+      });
+      
+      const currentStreak = Math.max(...Object.values(realStreaks).filter(v => v !== null));
+      const hasRelapseToday = todayRelapses.length > 0 || todayCheckIns.some(c => c.success === false);
       const dailySavings = (user.addictions.includes('alcohol') ? 12 : 0) + (user.addictions.includes('cigarette') ? 8 : 0);
       const totalSavings = currentStreak * dailySavings;
       const addictionText = user.addictions.length === 2 ? "l'alcool et la cigarette" : user.addictions.includes('alcohol') ? "l'alcool" : "la cigarette";
       
-      const fallbackMessages = [
-        `${user.firstName}, après ${currentStreak} jours sans ${addictionText}, ton corps se régénère ! 🧬\n\nTu as économisé ${totalSavings}€ et ton système immunitaire est 40% plus efficace qu'au jour 1.\n\n💪 Astuce : Bois un grand verre d'eau au réveil pour booster cette détox naturelle !`,
-        
-        `Bravo ${user.firstName} ! ${currentStreak} jours de sobriété = ${totalSavings}€ d'économies ! 💰\n\nTon foie a éliminé 85% des toxines accumulées et ta qualité de sommeil s'améliore de 30%.\n\n🌟 Continue, chaque jour te rapproche de tes objectifs !`,
-        
-        `${user.firstName}, ${currentStreak} jours sans ${addictionText} : ton corps te dit MERCI ! 🙏\n\nÉconomies : ${totalSavings}€ | Espérance de vie : +2 semaines | Énergie : +50%\n\n🚀 Astuce : Remplace l'envie par 5 minutes de marche rapide !`
-      ];
+      let fallbackMessage;
       
-      const randomMessage = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
-      setAiMessage(randomMessage);
+      if (hasRelapseToday) {
+        // Messages pour rechute
+        const relapseMessages = [
+          `${user.firstName}, une rechute ne définit pas ton parcours ! 💪\n\nC'est une étape d'apprentissage que 90% des personnes vivent. Ton cerveau a déjà commencé à changer.\n\n🧠 Astuce : Identifie ce qui a déclenché cette rechute pour mieux l'anticiper.`,
+          
+          `${user.firstName}, tu peux recommencer dès maintenant ! 🌱\n\nChaque rechute t'apprend quelque chose sur tes déclencheurs. Tes ${user.bestStreaks ? Math.max(...Object.values(user.bestStreaks)) : 0} jours précédents comptent toujours.\n\n🚀 Redémarre fort : remplace cette habitude par une activité positive !`,
+          
+          `${user.firstName}, pas de jugement, juste de la bienveillance ! 🤗\n\nLes rechutes font partie du processus. L'important c'est de se relever rapidement.\n\n💡 Astuce : Note ce qui s'est passé pour éviter la prochaine fois.`
+        ];
+        fallbackMessage = relapseMessages[Math.floor(Math.random() * relapseMessages.length)];
+      } else if (currentStreak === 0) {
+        // Messages pour jour 0 (début)
+        const startMessages = [
+          `${user.firstName}, aujourd'hui marque le début de ton aventure ! 🌟\n\nChaque grand parcours commence par un premier pas. Tu as déjà pris la décision la plus importante.\n\n💪 Astuce : Fixe-toi un objectif pour demain et célèbre chaque petite victoire !`,
+          
+          `Bienvenue dans ton parcours, ${user.firstName} ! 🚀\n\nAujourd'hui, ton corps commence déjà à se régénérer. Dans 24h, tu auras franchi ta première étape.\n\n🌱 Astuce : Prépare des activités alternatives pour les moments difficiles !`
+        ];
+        fallbackMessage = startMessages[Math.floor(Math.random() * startMessages.length)];
+      } else {
+        // Messages pour succès
+        const successMessages = [
+          `${user.firstName}, après ${currentStreak} jours sans ${addictionText}, ton corps se régénère ! 🧬\n\nTu as économisé ${totalSavings}€ et ton système immunitaire est 40% plus efficace qu'au jour 1.\n\n💪 Astuce : Bois un grand verre d'eau au réveil pour booster cette détox naturelle !`,
+          
+          `Bravo ${user.firstName} ! ${currentStreak} jours de sobriété = ${totalSavings}€ d'économies ! 💰\n\nTon foie a éliminé 85% des toxines accumulées et ta qualité de sommeil s'améliore de 30%.\n\n🌟 Continue, chaque jour te rapproche de tes objectifs !`,
+          
+          `${user.firstName}, ${currentStreak} jours sans ${addictionText} : ton corps te dit MERCI ! 🙏\n\nÉconomies : ${totalSavings}€ | Espérance de vie : +2 semaines | Énergie : +50%\n\n🚀 Astuce : Remplace l'envie par 5 minutes de marche rapide !`
+        ];
+        fallbackMessage = successMessages[Math.floor(Math.random() * successMessages.length)];
+      }
+      
+      setAiMessage(fallbackMessage);
     } finally {
       setIsLoadingMessage(false);
     }
@@ -409,7 +450,13 @@ const DashboardCompact = () => {
       {showCheckIn && (
         <CheckIn
           isOpen={showCheckIn}
-          onClose={() => setShowCheckIn(false)}
+          onClose={() => {
+            setShowCheckIn(false);
+            // Recharger le message IA après un check-in
+            setTimeout(() => {
+              generateAIMessage();
+            }, 1000);
+          }}
         />
       )}
 
