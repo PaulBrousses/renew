@@ -81,98 +81,113 @@ const BadgesModern = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
         
         {/* Statistiques rapides */}
-        <div className="flex space-x-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{alcoholBadges.length}</div>
-            <div className="text-xs text-gray-500">Alcool</div>
+        <div className="grid grid-cols-2 gap-6">
+          <div className="text-center bg-blue-50 rounded-xl p-4 border border-blue-100">
+            <div className="text-3xl font-bold text-blue-600 mb-1">{alcoholBadges.length}</div>
+            <div className="text-sm font-medium text-gray-700">Badges Alcool</div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{cigaretteBadges.length}</div>
-            <div className="text-xs text-gray-500">Cigarette</div>
+          <div className="text-center bg-green-50 rounded-xl p-4 border border-green-100">
+            <div className="text-3xl font-bold text-green-600 mb-1">{cigaretteBadges.length}</div>
+            <div className="text-sm font-medium text-gray-700">Badges Cigarette</div>
           </div>
         </div>
-      </div>
 
-      {/* Prochain badge à débloquer */}
-      {nextBadge && (
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-          <div className="flex items-center space-x-3 mb-4">
-            <Target className="w-5 h-5 text-blue-600" />
-            <h3 className="font-semibold text-gray-900">Prochain objectif</h3>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <BadgeCard badge={nextBadge} isNext={true} />
+        {/* Prochain badge à débloquer */}
+        {nextBadge && (
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-200">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <Target className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="font-bold text-lg text-gray-900">Prochain objectif</h3>
+            </div>
             
-            <div className="flex-1">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Progression</span>
-                <span className="text-sm text-gray-500">
-                  {Math.max(...Object.values(currentStreaks).filter(v => v !== null))} / {nextBadge.days}
-                </span>
+            <div className="flex items-center space-x-6">
+              <div className="flex-shrink-0">
+                <BadgeCard badge={nextBadge} isNext={true} />
               </div>
               
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
-                  style={{ 
-                    width: `${Math.min(100, (Math.max(...Object.values(currentStreaks).filter(v => v !== null)) / nextBadge.days) * 100)}%` 
-                  }}
-                />
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-semibold text-gray-700">Progression</span>
+                  <span className="text-sm font-medium text-blue-600">
+                    {Math.max(...Object.values(currentStreaks).filter(v => v !== null))} / {nextBadge.days} jours
+                  </span>
+                </div>
+                
+                <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
+                  <div 
+                    className="bg-gradient-to-r from-blue-500 to-indigo-600 h-3 rounded-full transition-all duration-500"
+                    style={{ 
+                      width: `${Math.min(100, (Math.max(...Object.values(currentStreaks).filter(v => v !== null)) / nextBadge.days) * 100)}%` 
+                    }}
+                  />
+                </div>
+                
+                <p className="text-sm font-medium text-gray-700 mb-2">{nextBadge.description}</p>
+                <p className="text-sm text-blue-600 font-medium">
+                  Plus que {nextBadge.days - Math.max(...Object.values(currentStreaks).filter(v => v !== null))} jours !
+                </p>
               </div>
-              
-              <p className="text-xs text-gray-600 mt-2">{nextBadge.description}</p>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Badges débloqués par addiction */}
-      {addictions.includes('alcohol') && alcoholBadges.length > 0 && (
-        <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-            <h3 className="font-semibold text-gray-900">Badges Alcool</h3>
-            <div className="flex-1 h-px bg-gray-200"></div>
+        {/* Badges débloqués par addiction */}
+        {addictions.includes('alcohol') && alcoholBadges.length > 0 && (
+          <div className="bg-white rounded-2xl p-6 border border-gray-100">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-6 h-6 bg-red-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-xs font-bold">🍷</span>
+              </div>
+              <h3 className="font-bold text-lg text-gray-900">Badges Alcool</h3>
+              <div className="flex-1 h-px bg-gray-200"></div>
+              <span className="text-sm font-medium text-gray-500">{alcoholBadges.length} badge{alcoholBadges.length > 1 ? 's' : ''}</span>
+            </div>
+            
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              {alcoholBadges.slice(-8).map((badge) => (
+                <BadgeCard key={badge.id} badge={badge} />
+              ))}
+            </div>
           </div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {alcoholBadges.slice(-8).map((badge) => (
-              <BadgeCard key={badge.id} badge={badge} />
-            ))}
-          </div>
-        </div>
-      )}
+        )}
 
-      {addictions.includes('cigarette') && cigaretteBadges.length > 0 && (
-        <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-            <h3 className="font-semibold text-gray-900">Badges Cigarette</h3>
-            <div className="flex-1 h-px bg-gray-200"></div>
+        {addictions.includes('cigarette') && cigaretteBadges.length > 0 && (
+          <div className="bg-white rounded-2xl p-6 border border-gray-100">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-6 h-6 bg-gray-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-xs font-bold">🚬</span>
+              </div>
+              <h3 className="font-bold text-lg text-gray-900">Badges Cigarette</h3>
+              <div className="flex-1 h-px bg-gray-200"></div>
+              <span className="text-sm font-medium text-gray-500">{cigaretteBadges.length} badge{cigaretteBadges.length > 1 ? 's' : ''}</span>
+            </div>
+            
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              {cigaretteBadges.slice(-8).map((badge) => (
+                <BadgeCard key={badge.id} badge={badge} />
+              ))}
+            </div>
           </div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {cigaretteBadges.slice(-8).map((badge) => (
-              <BadgeCard key={badge.id} badge={badge} />
-            ))}
-          </div>
-        </div>
-      )}
+        )}
 
           {/* Message d'encouragement si aucun badge */}
           {unlockedBadges.length === 0 && (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="w-8 h-8 text-blue-600" />
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-12 text-center border border-blue-100">
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                <Star className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Tes premiers badges t'attendent !</h3>
-              <p className="text-gray-600 max-w-md mx-auto">
-                Continue ton parcours jour après jour. Chaque étape franchie débloquera de nouvelles récompenses.
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Tes premiers badges t'attendent !</h3>
+              <p className="text-gray-600 max-w-md mx-auto text-lg leading-relaxed">
+                Continue ton parcours jour après jour. Chaque étape franchie débloquera de nouvelles récompenses pour célébrer tes progrès.
               </p>
+              <div className="mt-6 text-sm text-blue-600 font-medium">
+                🌟 Premier badge dans quelques jours !
+              </div>
             </div>
           )}
         </div>
