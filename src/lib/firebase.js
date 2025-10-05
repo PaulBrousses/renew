@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailLink, sendSignInLinkToEmail, isSignInWithEmailLink } from 'firebase/auth';
+import { getAuth, signInWithEmailLink, sendSignInLinkToEmail, isSignInWithEmailLink, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -15,6 +15,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Configuration de la persistance pour maintenir la connexion pendant une semaine
+const initializeAuthPersistence = async () => {
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+    console.log('✅ Persistance Firebase configurée : connexion maintenue pendant une semaine');
+  } catch (error) {
+    console.error('❌ Erreur configuration persistance:', error);
+  }
+};
+
+// Initialiser la persistance
+initializeAuthPersistence();
 
 const actionCodeSettings = {
   url: window.location.origin,
@@ -55,9 +68,18 @@ export const completeMagicLinkSignIn = async () => {
     }
 
     try {
+      // S'assurer que la persistance est configurée avant la connexion
+      await setPersistence(auth, browserLocalPersistence);
+      
       const result = await signInWithEmailLink(auth, email, window.location.href);
       window.localStorage.removeItem('emailForSignIn');
       window.history.replaceState({}, document.title, window.location.pathname);
+      
+      // Marquer la date de connexion pour le suivi de session
+      const loginTimestamp = new Date().getTime();
+      window.localStorage.setItem('lastLoginTime', loginTimestamp.toString());
+      
+      console.log('✅ Connexion réussie - Session maintenue pour une semaine');
       
       return { success: true, user: result.user };
     } catch (error) {
@@ -100,4 +122,39 @@ export const updateUserData = async (userId, updates) => {
   } catch (error) {
     return { success: false, error: error.message };
   }
+};
+
+// Vérifier si la session est encore valide (moins d'une semaine)
+export const isSessionValid = () => {
+  const lastLoginTime = window.localStorage.getItem('lastLoginTime');
+  if (!lastLoginTime) return false;
+  
+  const oneWeekInMs = 7 * 24 * 60 * 60 * 1000; // 7 jours en millisecondes
+  const currentTime = new Date().getTime();
+  const timeDifference = currentTime - parseInt(lastLoginTime);
+  
+  return timeDifference < oneWeekInMs;
+};
+
+// Obtenir le temps restant avant expiration de session
+export const getSessionTimeRemaining = () => {
+  const lastLoginTime = window.localStorage.getItem('lastLoginTime');
+  if (!lastLoginTime) return 0;
+  
+  const oneWeekInMs = 7 * 24 * 60 * 60 * 1000;
+  const currentTime = new Date().getTime();
+  const timeDifference = currentTime - parseInt(lastLoginTime);
+  const timeRemaining = oneWeekInMs - timeDifference;
+  
+  return Math.max(0, timeRemaining);
+};
+
+// Nettoyer les données de session expirée
+export const cleanExpiredSession = () => {
+  if (!isSessionValid()) {
+    window.localStorage.removeItem('lastLoginTime');
+    console.log('🕒 Session expirée - nettoyage effectué');
+    return true;
+  }
+  return false;
 };

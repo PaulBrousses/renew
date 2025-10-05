@@ -1,5 +1,5 @@
 import React, { useReducer, useEffect } from 'react';
-import { auth, saveUserData, getUserData, updateUserData, completeMagicLinkSignIn } from '../lib/firebase';
+import { auth, saveUserData, getUserData, updateUserData, completeMagicLinkSignIn, isSessionValid, cleanExpiredSession } from '../lib/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { AppContext } from './AppContextDefinition';
 import { getNewlyUnlockedBadges } from '../utils/badges';
@@ -233,9 +233,18 @@ export const AppProvider = ({ children }) => {
     handleMagicLink();
     
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      // Vérifier si la session est expirée
+      if (user && !isSessionValid()) {
+        console.log('🕒 Session expirée - déconnexion automatique');
+        cleanExpiredSession();
+        await signOut(auth);
+        return;
+      }
+      
       dispatch({ type: 'SET_SESSION', payload: user });
       
       if (user) {
+        console.log('✅ Utilisateur connecté - session valide pour', Math.ceil((7 * 24 * 60 * 60 * 1000 - (new Date().getTime() - parseInt(window.localStorage.getItem('lastLoginTime') || '0'))) / (24 * 60 * 60 * 1000)), 'jours');
         await loadUserData(user.uid);
       }
     });
@@ -405,8 +414,11 @@ export const AppProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    // Nettoyer les données de session lors de la déconnexion manuelle
+    window.localStorage.removeItem('lastLoginTime');
     await signOut(auth);
     dispatch({ type: 'LOGOUT' });
+    console.log('👋 Déconnexion manuelle - session nettoyée');
   };
 
   const setView = (view) => {
